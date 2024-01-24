@@ -5,14 +5,22 @@ import argparse
 def process_gitignore(gitignore_path):
     # Function to process the .gitignore file
     with open(gitignore_path, 'r') as filenames:
+        lines_processed = 0
         for file in filenames:
             file = file.strip()
+
+            # Process the files that are not comments
             if file and not file.startswith('#'):
                 try: 
                     subprocess.run(["git", "rm", "--cached", file], check=True)
-                    print(f"File {file} has been successfully removed from tracking.")
+                    print(f"{file} has been successfully removed from tracking.")
+                    lines_processed += 1
                 except subprocess.CalledProcessError as e:
                     print(f"An error occurred while removing {file} from tracking.")
+        
+        if lines_processed == 0:
+            filenames.close()
+            print("The .gitignore file is empty or only contains comments.")
 
 def main():
     parser = argparse.ArgumentParser(description='Process .gitignore and untrack files.')
@@ -22,7 +30,7 @@ def main():
 
     input_path = args.path
 
-    # If input path is a directory add .gitognore
+    # If input path is a directory add .gitignore
     if os.path.isdir(input_path):
         gitignore_path = os.path.join(input_path, '.gitignore')
 
@@ -37,7 +45,7 @@ def main():
     if os.path.exists(gitignore_path):
         process_gitignore(gitignore_path)
     else:
-        parser.error("ERROR: .gitignore file not found")
+        parser.error("ERROR: .gitignore file not found. Check your Directory...")
 
 if __name__ == "__main__":
     main()
