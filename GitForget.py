@@ -13,8 +13,18 @@ def process_gitignore(gitignore_path):
 
             # Process the files that are not comments
             if file and not file.startswith('#'):
+                full_path = os.path.join(gitignore_path, file)
+                
+                # Check if it's a directory
+                if os.path.isdir(full_path):
+                    # It's a directory, use the recursive option
+                    command = ["git", "rm", "--cached", "-r", file]
+                else:
+                    # It's a file, no need for the recursive option
+                    command = ["git", "rm", "--cached", file]
+
                 try: 
-                    subprocess.run(["git", "rm", "--cached", file], check=True)
+                    subprocess.run(command)
                     print(f"{file} has been successfully removed from tracking.")
                     lines_processed += 1
                 except subprocess.CalledProcessError as e:
