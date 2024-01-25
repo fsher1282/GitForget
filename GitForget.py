@@ -105,8 +105,8 @@ def main():
 
     # Run the functions
     if os.path.exists(gitignore_path):
-        get_tracked_files(input_path)
-        process_gitignore(input_path, gitignore_path)
+        tracked_files = get_tracked_files(input_path)
+        process_gitignore(input_path, gitignore_path, tracked_files)
     else:
         parser.error("ERROR: .gitignore file not found. Make sure one exists...")
 
